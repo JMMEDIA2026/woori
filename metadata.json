@@ -1,0 +1,6 @@
+{
+  "name": "비영리민간단체 우리원",
+  "description": "비영리민간단체 우리원 및 사단법인 탈북민공익활동지원연합의 통합 디지털 트랜스포메이션 플랫폼이자 디지털 전략 센터",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

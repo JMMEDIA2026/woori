@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudflare Hyperdrive & SQL Architecture</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Pretendard:wght@400;500;700&display=swap');
+    body { font-family: 'Pretendard', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="min-h-screen p-8 lg:p-16">
+  <div class="max-w-5xl mx-auto space-y-16">
+    
+    <header class="text-center space-y-4">
+      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+        Database Architecture & Hyperdrive
+      </h1>
+      <p class="text-slate-400 text-lg">통합 데이터베이스 스키마 및 Cloudflare Workers 연동 명세</p>
+    </header>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-4">
+        <h2 class="text-2xl font-bold text-white">1. 데이터베이스 스키마 (SQL DDL)</h2>
+      </div>
+      <img src="https://via.placeholder.com/1000x200/1e293b/38bdf8?text=Relational+Database+Schema+Architecture" alt="Database Schema Architecture" class="w-full rounded-2xl shadow-2xl border border-slate-700">
+      <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl overflow-x-auto">
+        <pre class="text-sm text-emerald-300"><code>-- 회원 관리 (Members)
+CREATE TABLE members (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  level TEXT NOT NULL DEFAULT '일반',
+  status TEXT NOT NULL DEFAULT '활성',
+  join_date TIMESTAMP DEFAULT NOW()
+);
+
+-- 콘텐츠 관리 (Contents)
+CREATE TABLE contents (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL,
+  author TEXT NOT NULL,
+  views INTEGER DEFAULT 0,
+  status TEXT NOT NULL DEFAULT '게시',
+  published_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 후원 및 재정 (Donations)
+CREATE TABLE donations (
+  id SERIAL PRIMARY KEY,
+  member_id INTEGER REFERENCES members(id),
+  donor_name TEXT NOT NULL,
+  amount NUMERIC NOT NULL,
+  type TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT '완료',
+  date TIMESTAMP DEFAULT NOW()
+);
+
+-- 상담 및 민원 (Consultations)
+CREATE TABLE consultations (
+  id SERIAL PRIMARY KEY,
+  member_id INTEGER REFERENCES members(id),
+  requester_name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT '대기중',
+  manager TEXT,
+  requested_at TIMESTAMP DEFAULT NOW()
+);</code></pre>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-4">
+        <h2 class="text-2xl font-bold text-white">2. Cloudflare Hyperdrive 연동</h2>
+      </div>
+      <img src="https://via.placeholder.com/1000x200/1e293b/a78bfa?text=Cloudflare+Workers+Hyperdrive+Integration" alt="Hyperdrive Connection Architecture" class="w-full rounded-2xl shadow-2xl border border-slate-700">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+          <h3 class="text-lg font-bold text-slate-300 mb-4">wrangler.jsonc</h3>
+          <pre class="text-xs text-purple-300"><code>{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "woorione-hyperdrive-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-02-04",
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "your-hyperdrive-id",
+      "localConnectionString": "postgres://user@localhost/db"
+    }
+  ]
+}</code></pre>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+          <h3 class="text-lg font-bold text-slate-300 mb-4">hyperdrive.ts (Utility)</h3>
+          <pre class="text-xs text-blue-300"><code>import { Client } from "pg";
+
+export async function queryHyperdrive(env, queryText, params = []) {
+  const client = new Client({
+    connectionString: env.HYPERDRIVE.connectionString,
+  });
+
+  try {
+    await client.connect();
+    const result = await client.query(queryText, params);
+    return result.rows;
+  } finally {
+    await client.end();
+  }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-4">
+        <h2 class="text-2xl font-bold text-white">3. 환경 변수 정리 (.env)</h2>
+      </div>
+      <img src="https://via.placeholder.com/1000x200/1e293b/fbbf24?text=Environment+Variables+Management" alt="Environment Config" class="w-full rounded-2xl shadow-2xl border border-slate-700">
+      <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+        <p class="text-sm text-slate-400 mb-4">불필요한 <code>HYPERDRIVE_CONNECTION_STRING</code>을 제거하고 안전한 환경 변수만 유지합니다.</p>
+        <pre class="text-sm text-yellow-300"><code># Cloud SQL 연결 설정
+SQL_HOST="your-db-host"
+SQL_DB_NAME="your-db-name"
+SQL_USER="user"
+SQL_PASSWORD="password"</code></pre>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

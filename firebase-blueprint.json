@@ -1,0 +1,54 @@
+{
+  "collections": [
+    {
+      "name": "banners",
+      "fields": {
+        "title": "string",
+        "imgUrl": "string",
+        "order": "number"
+      },
+      "rules": {
+        "read": "true",
+        "write": "request.auth != null"
+      }
+    },
+    {
+      "name": "posts",
+      "fields": {
+        "title": "string",
+        "content": "string",
+        "img": "string",
+        "type": "string",
+        "date": "string",
+        "createdAt": "timestamp"
+      },
+      "rules": {
+        "read": "true",
+        "write": "request.auth != null"
+      }
+    },
+    {
+      "name": "partners",
+      "fields": {
+        "name": "string",
+        "img": "string",
+        "url": "string",
+        "order": "number"
+      },
+      "rules": {
+        "read": "true",
+        "write": "request.auth != null"
+      }
+    },
+    {
+      "name": "admins",
+      "fields": {
+        "email": "string"
+      },
+      "rules": {
+        "read": "true",
+        "write": "false"
+      }
+    }
+  ]
+}
