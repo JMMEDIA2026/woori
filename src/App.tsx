@@ -153,7 +153,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans tracking-tight transition-colors duration-500 ease-in-out bg-stone-50 text-stone-800 selection:bg-rose-500/20">
+    <div className="min-h-screen flex flex-col font-sans tracking-tight transition-colors duration-500 ease-in-out bg-slate-50 text-slate-800 selection:bg-blue-900 selection:text-blue-50">
       {/* Universal GNB header */}
       <Navigation
         currentView={view}
@@ -164,7 +164,7 @@ export default function App() {
       {/* Main Responsive Auto-playing Image Carousel with framer-motion/react (Cross-fade) */}
       {view === "home" && (
         <div className="w-full">
-          <div className="relative overflow-hidden border-b border-stone-200 aspect-[21/9] md:aspect-[24/9] min-h-[340px] md:min-h-[460px] bg-stone-200 group select-none transition-all">
+          <div className="relative overflow-hidden border-b border-slate-200 aspect-[21/9] md:aspect-[24/9] min-h-[340px] md:min-h-[460px] bg-slate-200 group select-none transition-all">
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={activeSlide}
@@ -180,7 +180,7 @@ export default function App() {
                   className="w-full h-full object-cover grayscale opacity-90"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent"></div>
 
                 {/* Overlay Text inside the slider aligned to the common max-w-7xl grid */}
                 <div className="absolute inset-x-0 bottom-0 pb-10 pt-28 z-15 pointer-events-none">
@@ -189,7 +189,7 @@ export default function App() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15, duration: 0.4 }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold bg-white/20 backdrop-blur-md border border-white/40 text-white tracking-widest uppercase mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.2)]"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-lg font-bold bg-white/20 backdrop-blur-md border border-white/40 text-white tracking-widest uppercase mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.2)]"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
                       {primarySlides[activeSlide].badge}
@@ -199,7 +199,7 @@ export default function App() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.25, duration: 0.45 }}
-                      className="font-bold text-xl md:text-2xl lg:text-3xl text-white tracking-tight leading-tight max-w-3xl"
+                      className="font-bold text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-tight max-w-3xl"
                     >
                       {primarySlides[activeSlide].title}
                     </motion.h2>
@@ -208,7 +208,7 @@ export default function App() {
                       initial={{ opacity: 0, y: 25 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.35, duration: 0.5 }}
-                      className="text-sm md:text-base text-stone-200 font-medium mt-3 leading-relaxed max-w-2xl line-clamp-2 md:line-clamp-none"
+                      className="text-xl md:text-2xl text-slate-200 font-medium mt-3 leading-relaxed max-w-2xl line-clamp-2 md:line-clamp-none"
                     >
                       {primarySlides[activeSlide].description}
                     </motion.p>
@@ -268,7 +268,7 @@ export default function App() {
                     onClick={() => setActiveSlide(idx)}
                     className={`h-2 rounded-full transition-all duration-300 cursor-pointer shadow-sm hover:ring-2 hover:ring-rose-400 hover:ring-offset-2 hover:ring-offset-transparent active:scale-95 ${
                       activeSlide === idx
-                        ? "w-4.5 bg-rose-500"
+                        ? "w-4.5 bg-blue-600"
                         : "w-2 bg-white/60 hover:bg-white"
                     }`}
                     aria-label={`Go to slide ${idx + 1}`}
@@ -319,6 +319,8 @@ export default function App() {
                   <AcademicLibrary />
                 ) : subView === "feed" ? (
                   <SiteGallery />
+                ) : subView === "video" ? (
+                  <SiteGallery isVideo={true} />
                 ) : (
                   <CommunityBoard activeSubSection={subView} />
                 ))}
@@ -337,24 +339,24 @@ export default function App() {
       </main>
 
       {/* Clean Structured Footer */}
-      <footer className="border-t py-12 px-4 transition-all bg-stone-100 border-stone-200 text-stone-600">
+      <footer className="border-t py-12 px-4 transition-all bg-slate-100 border-slate-200 text-slate-600">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Logo brand */}
           <div className="md:col-span-4 space-y-3">
             <div className="flex items-center gap-2 text-left">
-              <div className="w-9 h-9 rounded-lg bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-600 font-bold text-base shadow-sm">
+              <div className="w-9 h-9 rounded-lg bg-rose-100 border border-slate-200 flex items-center justify-center text-slate-900 font-bold text-2xl shadow-sm">
                 N.S
               </div>
               <div>
-                <p className="font-bold text-sm tracking-tight text-stone-800">
+                <p className="font-bold text-xl tracking-tight text-slate-800">
                   {branding.orgName}
                 </p>
-                <p className="text-[10px] tracking-widest mt-0.5 text-stone-500">
+                <p className="text-xs tracking-widest mt-0.5 text-slate-500">
                   {branding.slogan}
                 </p>
               </div>
             </div>
-            <p className="text-xs leading-relaxed max-w-sm text-stone-500">
+            <p className="text-lg leading-relaxed max-w-sm text-slate-500">
               탈북민의 권익 신장, 시니어 단원 1:1 동료 치유 멘토링, MBJK 메아리
               예술단 가동 및 사단법인 탈북민공익활동지원연합을 가동하는 충남
               아산 거점 연합체입니다.
@@ -362,11 +364,11 @@ export default function App() {
           </div>
 
           {/* Registration Details columns */}
-          <div className="md:col-span-5 space-y-2 text-xs">
-            <h4 className="font-bold text-sm text-stone-800">
+          <div className="md:col-span-5 space-y-2 text-lg">
+            <h4 className="font-bold text-xl text-slate-800">
               기관 인가 공직 신고 사항
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 leading-relaxed font-semibold text-stone-500">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 leading-relaxed font-semibold text-slate-500">
               <p>충청남도 비영리 등록: 제1540호</p>
               <p>기부금 공익 대상 지정: 행안부 등기</p>
               <p>주무 관청 인가: 통일부 소관사단</p>
@@ -377,17 +379,17 @@ export default function App() {
           </div>
 
           {/* Contact Details Column */}
-          <div className="md:col-span-3 space-y-3 text-xs text-left">
-            <h4 className="font-bold text-sm text-stone-800">
+          <div className="md:col-span-3 space-y-3 text-lg text-left">
+            <h4 className="font-bold text-xl text-slate-800">
               상설 사무처 연락수단
             </h4>
-            <div className="space-y-1 font-semibold text-stone-500">
+            <div className="space-y-1 font-semibold text-slate-500">
               <p className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                <MapPin className="w-3.5 h-3.5 text-blue-600" />
                 <span>충청남도 아산시 충무로 & 아산로</span>
               </p>
               <p className="flex items-center gap-1.5">
-                <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
+                <PhoneCall className="w-3.5 h-3.5 text-blue-600" />
                 <span>041-543-9060 (치유상담실 번호)</span>
               </p>
               <p>후원 전용: 농협 301-0251-8906-41 우리원</p>
@@ -396,7 +398,7 @@ export default function App() {
         </div>
 
         {/* copyright and credentials */}
-        <div className="max-w-7xl mx-auto border-t border-stone-200 mt-10 pt-6 text-center text-xs text-stone-400">
+        <div className="max-w-7xl mx-auto border-t border-slate-200 mt-10 pt-6 text-center text-lg text-slate-400">
           <p className="font-semibold flex items-center justify-center gap-4">
             <span>
               Copyright © 2026 비영리민간단체 우리원 & 사단법인
@@ -404,7 +406,7 @@ export default function App() {
             </span>
             <button
               onClick={() => setView("admin")}
-              className="px-3 py-1 rounded-full bg-white text-[10px] font-bold text-stone-500 hover:text-indigo-600 transition-all duration-300 uppercase tracking-widest border border-stone-200 hover:border-indigo-400 hover:shadow-[0_0_15px_2px_rgba(129,140,248,0.4)] hover:-translate-y-0.5 hover:ring-2 hover:ring-rose-400 hover:ring-offset-2 active:scale-95"
+              className="px-3 py-1 rounded-full bg-white text-xs font-bold text-slate-500 hover:text-indigo-600 transition-all duration-300 uppercase tracking-widest border border-slate-200 hover:border-indigo-400 hover:shadow-[0_0_15px_2px_rgba(129,140,248,0.4)] hover:-translate-y-0.5 hover:ring-2 hover:ring-rose-400 hover:ring-offset-2 active:scale-95"
             >
               Admin
             </button>

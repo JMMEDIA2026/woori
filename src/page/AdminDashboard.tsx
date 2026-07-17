@@ -68,45 +68,27 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      // Load banners
       const bannerDoc = await getDoc(doc(db, "banners", "main"));
       if (bannerDoc.exists()) {
         const data = bannerDoc.data();
-        setFeatureImg1(
-          data.img1 ||
-            "https://images.unsplash.com/photo-1593113563332-f1488c282124?q=80&w=600&auto=format&fit=crop",
-        );
-        setFeatureImg2(
-          data.img2 ||
-            "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop",
-        );
+        setFeatureImg1(data.img1 || "https://images.unsplash.com/photo-1593113563332-f1488c282124?q=80&w=600&auto=format&fit=crop");
+        setFeatureImg2(data.img2 || "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop");
       } else {
-        setFeatureImg1(
-          "https://images.unsplash.com/photo-1593113563332-f1488c282124?q=80&w=600&auto=format&fit=crop",
-        );
-        setFeatureImg2(
-          "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop",
-        );
+        setFeatureImg1("https://images.unsplash.com/photo-1593113563332-f1488c282124?q=80&w=600&auto=format&fit=crop");
+        setFeatureImg2("https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop");
       }
 
-      // Load partners
-      const partnersSnapshot = await getDocs(
-        query(collection(db, "partners"), orderBy("order")),
-      );
-      const partnersData = partnersSnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() }) as any,
-      );
+      const partnersSnapshot = await getDocs(query(collection(db, "partners"), orderBy("order")));
+      const partnersData = partnersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
       setPartners(partnersData.length > 0 ? partnersData : []);
 
-      // Load posts
-      const postsSnapshot = await getDocs(
-        query(collection(db, "posts"), orderBy("createdAt", "desc")),
-      );
-      setExistingPosts(
-        postsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-      );
+      const postsSnapshot = await getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc")));
+      setExistingPosts(postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error fetching data: ", error);
+      // fallback so we don't show empty inputs if offline during dev
+      if(!featureImg1) setFeatureImg1("https://images.unsplash.com/photo-1593113563332-f1488c282124?q=80&w=600&auto=format&fit=crop");
+      if(!featureImg2) setFeatureImg2("https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop");
     }
   };
 
@@ -237,16 +219,16 @@ export default function AdminDashboard() {
         <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center text-indigo-500 mb-4 shadow-inner">
           <LayoutDashboard className="w-10 h-10" />
         </div>
-        <h2 className="text-3xl font-black text-stone-900 tracking-tight">
+        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
           관리자 로그인
         </h2>
-        <p className="text-stone-500 text-center max-w-md">
+        <p className="text-slate-500 text-center max-w-md">
           홈페이지 관리를 위해 로그인이 필요합니다. 허가된 관리자 계정으로
           로그인해주세요.
         </p>
         <button
           onClick={handleLogin}
-          className="flex items-center gap-3 px-8 py-4 rounded-xl bg-stone-900 text-white font-bold hover:bg-stone-800 transition-all hover:shadow-lg hover:-translate-y-1"
+          className="flex items-center gap-3 px-8 py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all hover:shadow-lg hover:-translate-y-1"
         >
           <LogIn className="w-5 h-5" />
           Google 계정으로 로그인
@@ -257,27 +239,27 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-stone-900 text-white flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-lg">
             <LayoutDashboard className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-stone-900 tracking-tight">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
               통합 관리자 패널
             </h2>
-            <p className="text-stone-500 mt-1">
+            <p className="text-slate-500 mt-1">
               홈페이지의 모든 콘텐츠를 관리할 수 있습니다.
             </p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-sm font-medium text-stone-500 bg-stone-100 px-4 py-2 rounded-lg">
+          <div className="text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-lg">
             {user.email}
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-500 rounded-lg text-sm font-bold hover:bg-rose-100 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-blue-600 rounded-lg text-sm font-bold hover:bg-rose-100 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             로그아웃
@@ -285,7 +267,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="flex gap-4 border-b border-stone-200 pb-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
+      <div className="flex gap-4 border-b border-slate-200 pb-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
         {[
           { id: "banner", label: "메인 배너 설정" },
           { id: "board", label: "게시물 등록" },
@@ -297,8 +279,8 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab(tab.id)}
             className={`px-6 py-3 rounded-full font-bold transition-all ${
               activeTab === tab.id
-                ? "bg-stone-900 text-white shadow-md"
-                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                ? "bg-slate-900 text-white shadow-md"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
             {tab.label}
@@ -307,19 +289,19 @@ export default function AdminDashboard() {
       </div>
 
       {activeTab === "banner" && (
-        <div className="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm animate-fade-in">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-stone-100">
+        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
             <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
               <ImageIcon className="w-5 h-5" />
             </div>
-            <h3 className="text-xl font-bold text-stone-800">
+            <h3 className="text-xl font-bold text-slate-800">
               홈페이지 주요 기능 카드 이미지 설정
             </h3>
           </div>
 
           <div className="space-y-8">
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-stone-700">
+              <label className="block text-sm font-bold text-slate-700">
                 첫 번째 카드 이미지 URL (자립과 성장의 요람)
               </label>
               <div className="flex gap-4 items-start">
@@ -328,9 +310,9 @@ export default function AdminDashboard() {
                   value={featureImg1}
                   onChange={(e) => setFeatureImg1(e.target.value)}
                   placeholder="이미지 URL을 입력하세요"
-                  className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                  className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
                 />
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-stone-100 border border-stone-200 shrink-0">
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   {featureImg1 && (
                     <img
                       src={featureImg1}
@@ -347,7 +329,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-stone-700">
+              <label className="block text-sm font-bold text-slate-700">
                 두 번째 카드 이미지 URL (따뜻한 나눔의 실천)
               </label>
               <div className="flex gap-4 items-start">
@@ -356,9 +338,9 @@ export default function AdminDashboard() {
                   value={featureImg2}
                   onChange={(e) => setFeatureImg2(e.target.value)}
                   placeholder="이미지 URL을 입력하세요"
-                  className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                  className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
                 />
-                <div className="w-32 h-20 rounded-lg overflow-hidden bg-stone-100 border border-stone-200 shrink-0">
+                <div className="w-32 h-20 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   {featureImg2 && (
                     <img
                       src={featureImg2}
@@ -392,12 +374,12 @@ export default function AdminDashboard() {
       )}
 
       {activeTab === "board" && (
-        <div className="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm animate-fade-in">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-stone-100">
+        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
               <Upload className="w-5 h-5" />
             </div>
-            <h3 className="text-xl font-bold text-stone-800">
+            <h3 className="text-xl font-bold text-slate-800">
               갤러리 및 공지사항 게시물 등록
             </h3>
           </div>
@@ -410,9 +392,9 @@ export default function AdminDashboard() {
                   value="gallery"
                   checked={uploadType === "gallery"}
                   onChange={(e) => setUploadType(e.target.value)}
-                  className="w-4 h-4 text-emerald-500 border-stone-300 focus:ring-emerald-400"
+                  className="w-4 h-4 text-emerald-500 border-slate-300 focus:ring-emerald-400"
                 />
-                <span className="font-bold text-stone-700">갤러리</span>
+                <span className="font-bold text-slate-700">갤러리</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -420,14 +402,24 @@ export default function AdminDashboard() {
                   value="notice"
                   checked={uploadType === "notice"}
                   onChange={(e) => setUploadType(e.target.value)}
-                  className="w-4 h-4 text-emerald-500 border-stone-300 focus:ring-emerald-400"
+                  className="w-4 h-4 text-emerald-500 border-slate-300 focus:ring-emerald-400"
                 />
-                <span className="font-bold text-stone-700">공지사항</span>
+                <span className="font-bold text-slate-700">공지사항</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="video"
+                  checked={uploadType === "video"}
+                  onChange={(e) => setUploadType(e.target.value)}
+                  className="w-4 h-4 text-emerald-500 border-slate-300 focus:ring-emerald-400"
+                />
+                <span className="font-bold text-slate-700">영상</span>
               </label>
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-stone-700">
+              <label className="block text-sm font-bold text-slate-700">
                 게시물 제목
               </label>
               <input
@@ -435,12 +427,12 @@ export default function AdminDashboard() {
                 value={uploadTitle}
                 onChange={(e) => setUploadTitle(e.target.value)}
                 placeholder="게시물 제목을 입력하세요"
-                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
               />
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-stone-700">
+              <label className="block text-sm font-bold text-slate-700">
                 이미지 URL
               </label>
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
@@ -449,11 +441,11 @@ export default function AdminDashboard() {
                   value={uploadImg}
                   onChange={(e) => setUploadImg(e.target.value)}
                   placeholder="https://example.com/image.jpg"
-                  className="flex-1 w-full px-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
+                  className="flex-1 w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
                 />
               </div>
 
-              <div className="mt-4 border-2 border-dashed border-stone-200 rounded-2xl p-4 bg-stone-50 flex items-center justify-center min-h-[16rem]">
+              <div className="mt-4 border-2 border-dashed border-slate-200 rounded-2xl p-4 bg-slate-50 flex items-center justify-center min-h-[16rem]">
                 {uploadImg ? (
                   <img
                     src={uploadImg}
@@ -465,7 +457,7 @@ export default function AdminDashboard() {
                     }
                   />
                 ) : (
-                  <div className="text-center text-stone-400">
+                  <div className="text-center text-slate-400">
                     <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p className="text-sm font-medium">
                       이미지 URL을 입력하면 미리보기가 표시됩니다.
@@ -476,7 +468,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-stone-700">
+              <label className="block text-sm font-bold text-slate-700">
                 설명 / 내용
               </label>
               <textarea
@@ -484,7 +476,7 @@ export default function AdminDashboard() {
                 onChange={(e) => setUploadDesc(e.target.value)}
                 placeholder="게시물에 대한 설명을 입력하세요..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all resize-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all resize-none"
               />
             </div>
           </div>
@@ -506,28 +498,28 @@ export default function AdminDashboard() {
       )}
 
       {activeTab === "manage_board" && (
-        <div className="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm animate-fade-in">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-stone-100">
+        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
             <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-500 flex items-center justify-center">
               <FileText className="w-5 h-5" />
             </div>
-            <h3 className="text-xl font-bold text-stone-800">
+            <h3 className="text-xl font-bold text-slate-800">
               등록된 게시물 관리
             </h3>
           </div>
 
           <div className="space-y-4">
             {existingPosts.length === 0 ? (
-              <div className="text-center py-12 bg-stone-50 rounded-2xl border border-stone-200 border-dashed">
-                <p className="text-stone-500">등록된 게시물이 없습니다.</p>
+              <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+                <p className="text-slate-500">등록된 게시물이 없습니다.</p>
               </div>
             ) : (
               existingPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-stone-200 hover:border-stone-300 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors"
                 >
-                  <div className="w-24 h-16 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                  <div className="w-24 h-16 rounded-lg overflow-hidden bg-slate-100 shrink-0">
                     {post.img ? (
                       <img
                         src={post.img}
@@ -535,7 +527,7 @@ export default function AdminDashboard() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <ImageIcon className="w-6 h-6 m-auto text-stone-300" />
+                      <ImageIcon className="w-6 h-6 m-auto text-slate-300" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -545,17 +537,17 @@ export default function AdminDashboard() {
                       >
                         {post.type === "gallery" ? "갤러리" : "공지사항"}
                       </span>
-                      <span className="text-xs text-stone-400">
+                      <span className="text-xs text-slate-400">
                         {post.date}
                       </span>
                     </div>
-                    <h4 className="font-bold text-stone-900 truncate">
+                    <h4 className="font-bold text-slate-900 truncate">
                       {post.title}
                     </h4>
                   </div>
                   <button
                     onClick={() => handleDeletePost(post.id)}
-                    className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                    className="p-2 text-blue-600 hover:bg-slate-50 rounded-lg transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -567,19 +559,19 @@ export default function AdminDashboard() {
       )}
 
       {activeTab === "partners" && (
-        <div className="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm animate-fade-in">
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-stone-100">
+        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm animate-fade-in">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
                 <Link className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-bold text-stone-800">
+              <h3 className="text-xl font-bold text-slate-800">
                 제휴 기관 (로고 슬라이더) 관리
               </h3>
             </div>
             <button
               onClick={addPartner}
-              className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-lg text-sm font-bold hover:bg-stone-800 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors"
             >
               <Plus className="w-4 h-4" />
               기관 추가
@@ -590,12 +582,12 @@ export default function AdminDashboard() {
             {partners.map((partner, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-2xl border border-stone-200 bg-stone-50 flex flex-col md:flex-row gap-6 items-start"
+                className="p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col md:flex-row gap-6 items-start"
               >
                 <div className="flex-1 space-y-4 w-full">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-stone-500">
+                      <label className="text-xs font-bold text-slate-500">
                         기관명
                       </label>
                       <input
@@ -605,11 +597,11 @@ export default function AdminDashboard() {
                           handlePartnerChange(idx, "name", e.target.value)
                         }
                         placeholder="예: 통일부"
-                        className="w-full px-3 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-stone-500">
+                      <label className="text-xs font-bold text-slate-500">
                         연결 링크 URL
                       </label>
                       <input
@@ -619,12 +611,12 @@ export default function AdminDashboard() {
                           handlePartnerChange(idx, "url", e.target.value)
                         }
                         placeholder="https://..."
-                        className="w-full px-3 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-stone-500">
+                    <label className="text-xs font-bold text-slate-500">
                       로고 이미지 URL (PNG, SVG, JPG 등)
                     </label>
                     <input
@@ -634,13 +626,13 @@ export default function AdminDashboard() {
                         handlePartnerChange(idx, "img", e.target.value)
                       }
                       placeholder="이미지 주소를 입력하세요"
-                      className="w-full px-3 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div className="w-full md:w-48 flex flex-col items-center gap-3">
-                  <div className="w-full h-24 rounded-xl border border-stone-200 bg-white flex items-center justify-center p-2">
+                  <div className="w-full h-24 rounded-xl border border-slate-200 bg-white flex items-center justify-center p-2">
                     {partner.img ? (
                       <img
                         src={partner.img}
@@ -652,14 +644,14 @@ export default function AdminDashboard() {
                         }
                       />
                     ) : (
-                      <span className="text-xs text-stone-400">
+                      <span className="text-xs text-slate-400">
                         이미지 없음
                       </span>
                     )}
                   </div>
                   <button
                     onClick={() => removePartner(idx)}
-                    className="flex items-center gap-1 text-sm text-rose-500 hover:text-rose-600 font-bold"
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-slate-900 font-bold"
                   >
                     <Trash2 className="w-4 h-4" />
                     삭제
@@ -669,8 +661,8 @@ export default function AdminDashboard() {
             ))}
 
             {partners.length === 0 && (
-              <div className="text-center py-12 bg-stone-50 rounded-2xl border border-stone-200 border-dashed">
-                <p className="text-stone-500">등록된 제휴 기관이 없습니다.</p>
+              <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+                <p className="text-slate-500">등록된 제휴 기관이 없습니다.</p>
               </div>
             )}
           </div>
@@ -678,7 +670,7 @@ export default function AdminDashboard() {
           <div className="mt-8 flex justify-end">
             <button
               onClick={handlePartnersSave}
-              className="flex items-center gap-2 px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+              className="flex items-center gap-2 px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95"
             >
               {isPartnersSaved ? (
                 <Check className="w-5 h-5" />
