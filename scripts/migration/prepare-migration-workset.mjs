@@ -3,6 +3,16 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
+const CATEGORY_RULES = [
+  { category: 'board_or_post', pattern: /(board|bbs|notice|community|post|news)/ },
+  { category: 'notice_popup', pattern: /(popup|banner)/ },
+  {
+    category: 'media_or_attachment',
+    pattern: /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|mp4|mov|avi|webm|pdf|hwp|doc|docx|xls|xlsx|zip|css|js|woff|woff2|ttf|eot)$/i,
+  },
+  { category: 'admin_or_auth', pattern: /(admin|manager|login)/ },
+];
+
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
   if (index === -1) return fallback;
@@ -11,10 +21,9 @@ function getArg(name, fallback) {
 
 function categoryForUrl(url) {
   const lower = url.toLowerCase();
-  if (/(board|bbs|notice|community|post|news)/.test(lower)) return 'board_or_post';
-  if (/(popup|banner)/.test(lower)) return 'notice_popup';
-  if (/\.(jpg|jpeg|png|gif|webp|svg|bmp|mp4|mov|avi|pdf|hwp|doc|docx|xls|xlsx|zip)$/i.test(lower)) return 'media_or_attachment';
-  if (/(admin|manager|login)/.test(lower)) return 'admin_or_auth';
+  for (const rule of CATEGORY_RULES) {
+    if (rule.pattern.test(lower)) return rule.category;
+  }
   return 'page_content';
 }
 

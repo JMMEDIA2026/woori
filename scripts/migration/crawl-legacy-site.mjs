@@ -8,6 +8,14 @@ import { pipeline } from 'node:stream/promises';
 const DEFAULT_MAX_PAGES = 3000;
 const DEFAULT_CONCURRENCY = 4;
 const DEFAULT_OUTPUT_DIR = resolve(process.cwd(), 'migration-output/legacy-snapshot');
+const DEFAULT_RETRIES = 2;
+const DEFAULT_BATCH_DELAY_MS = 200;
+const ASSET_EXTENSIONS = new Set([
+  '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.ico',
+  '.mp4', '.mov', '.avi', '.webm',
+  '.pdf', '.hwp', '.doc', '.docx', '.xls', '.xlsx', '.zip',
+  '.css', '.js', '.woff', '.woff2', '.ttf', '.eot',
+]);
 
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
@@ -61,6 +69,43 @@ function isHtmlResponse(contentType, url) {
   return !extension || extension === '.html' || extension === '.htm' || extension === '.php' || extension === '.asp' || extension === '.aspx';
 }
 
+function isLikelyAssetUrl(url) {
+  const parsed = new URL(url);
+  const extension = extname(parsed.pathname).toLowerCase();
+  return ASSET_EXTENSIONS.has(extension);
+}
+
+function getRootDomain(hostname) {
+  const parts = hostname.split('.');
+  if (parts.length <= 2) return hostname;
+  return parts.slice(-2).join('.');
+}
+
+function shouldIncludeHost(candidateHost, baseHost, includeSubdomains) {
+  if (candidateHost === baseHost) return true;
+  if (!includeSubdomains) return false;
+  return getRootDomain(candidateHost) === getRootDomain(baseHost);
+}
+
+async function delay(ms) {
+  await new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
+}
+
+async function fetchWithRetry(url, options, retries) {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const response = await fetch(url, options);
+      if (response.ok || response.status < 500 || attempt === retries) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < retries) await delay(300 * (attempt + 1));
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
 function sanitizePathPart(value) {
   return value.replace(/[^a-zA-Z0-9._-]/g, '_');
 }
@@ -108,9 +153,14 @@ async function crawlSite() {
   const outDir = getArg('out', DEFAULT_OUTPUT_DIR);
   const maxPages = parseNumberArg('max-pages', DEFAULT_MAX_PAGES);
   const concurrency = parseNumberArg('concurrency', DEFAULT_CONCURRENCY);
+  const retries = parseNumberArg('retries', DEFAULT_RETRIES);
+  const batchDelayMs = parseNumberArg('batch-delay-ms', DEFAULT_BATCH_DELAY_MS);
+  const includeSubdomains = getArg('include-subdomains', 'true') !== 'false';
 
   if (!baseUrlRaw) {
-    console.error('Usage: node scripts/migration/crawl-legacy-site.mjs --base https://usao.co.kr [--out /path] [--max-pages 3000]');
+    console.error(
+      'Usage: node scripts/migration/crawl-legacy-site.mjs --base https://usao.co.kr [--out /path] [--max-pages 3000] [--concurrency 4] [--retries 2] [--batch-delay-ms 200] [--include-subdomains true]',
+    );
     process.exit(1);
   }
 
@@ -127,7 +177,7 @@ async function crawlSite() {
     visited.add(url);
 
     try {
-      const response = await fetch(url, { redirect: 'follow' });
+      const response = await fetchWithRetry(url, { redirect: 'follow' }, retries);
       if (!response.ok) {
         errors.push({ url, status: response.status, reason: `HTTP ${response.status}` });
         return;
@@ -144,12 +194,12 @@ async function crawlSite() {
 
         for (const discoveredUrl of discovered) {
           const parsed = new URL(discoveredUrl);
-          if (parsed.hostname !== baseUrl.hostname) continue;
+          if (!shouldIncludeHost(parsed.hostname, baseUrl.hostname, includeSubdomains)) continue;
 
-          if (isHtmlResponse('', discoveredUrl)) {
-            if (!visited.has(discoveredUrl) && !queue.includes(discoveredUrl)) queue.push(discoveredUrl);
-          } else {
+          if (isLikelyAssetUrl(discoveredUrl)) {
             assets.add(discoveredUrl);
+          } else {
+            if (!visited.has(discoveredUrl) && !queue.includes(discoveredUrl)) queue.push(discoveredUrl);
           }
         }
 
@@ -176,13 +226,14 @@ async function crawlSite() {
   while (queue.length > 0 && visited.size < maxPages) {
     const batch = queue.splice(0, concurrency);
     await Promise.all(batch.map((url) => processUrl(url)));
+    await delay(batchDelayMs);
   }
 
   const assetsList = [...assets].sort();
   for (const assetUrl of assetsList) {
     if (visited.has(assetUrl)) continue;
     try {
-      const response = await fetch(assetUrl);
+      const response = await fetchWithRetry(assetUrl, {}, retries);
       if (!response.ok || !response.body) {
         errors.push({ url: assetUrl, status: response.status, reason: `Asset HTTP ${response.status}` });
         continue;
@@ -198,7 +249,7 @@ async function crawlSite() {
     baseUrl: baseUrl.toString(),
     startedAt,
     finishedAt: new Date().toISOString(),
-    settings: { maxPages, concurrency, outDir },
+    settings: { maxPages, concurrency, retries, batchDelayMs, includeSubdomains, outDir },
     summary: {
       crawledPages: pages.length,
       discoveredAssets: assetsList.length,

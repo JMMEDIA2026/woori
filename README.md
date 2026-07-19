@@ -29,6 +29,6 @@ View your app in AI Studio: https://ai.studio/apps/ebdefa02-d506-4480-9e95-45e46
    `npm run migration:verify`
 
 Optional flags:
-- `migration:crawl`: `--out /absolute/path --max-pages 3000 --concurrency 4`
+- `migration:crawl`: `--out /absolute/path --max-pages 3000 --concurrency 4 --retries 2 --batch-delay-ms 200 --include-subdomains true`
 - `migration:prepare`: `--input /absolute/path/to/manifest.json --out /absolute/path`
 - `migration:verify`: `--input /absolute/path/to/verify-seed.json --out /absolute/path`
