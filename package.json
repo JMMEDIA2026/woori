@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "vercel-build": "vite build",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "migration:crawl": "node scripts/migration/crawl-legacy-site.mjs",
+    "migration:crawl": "node scripts/migration/crawl-legacy-site.mjs --base http://usao.co.kr",
     "migration:prepare": "node scripts/migration/prepare-migration-workset.mjs",
     "migration:verify": "node scripts/migration/verify-migration-coverage.mjs"
   },
