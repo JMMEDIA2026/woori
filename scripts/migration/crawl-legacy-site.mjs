@@ -2,11 +2,12 @@
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
-import { dirname, extname, join } from 'node:path';
+import { dirname, extname, join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 
 const DEFAULT_MAX_PAGES = 3000;
 const DEFAULT_CONCURRENCY = 4;
+const DEFAULT_OUTPUT_DIR = resolve(process.cwd(), 'migration-output/legacy-snapshot');
 
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
@@ -104,7 +105,7 @@ async function saveStream(filePath, stream) {
 
 async function crawlSite() {
   const baseUrlRaw = getArg('base');
-  const outDir = getArg('out', '/home/runner/work/woori/woori/migration-output/legacy-snapshot');
+  const outDir = getArg('out', DEFAULT_OUTPUT_DIR);
   const maxPages = parseNumberArg('max-pages', DEFAULT_MAX_PAGES);
   const concurrency = parseNumberArg('concurrency', DEFAULT_CONCURRENCY);
 

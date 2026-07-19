@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
@@ -36,8 +36,8 @@ function initializeMapping(urls) {
 }
 
 async function main() {
-  const inputPath = getArg('input', '/home/runner/work/woori/woori/migration-output/legacy-snapshot/manifest.json');
-  const outDir = getArg('out', '/home/runner/work/woori/woori/migration-work');
+  const inputPath = getArg('input', resolve(process.cwd(), 'migration-output/legacy-snapshot/manifest.json'));
+  const outDir = getArg('out', resolve(process.cwd(), 'migration-work'));
 
   const input = JSON.parse(await readFile(inputPath, 'utf8'));
   const pageUrls = (input.pages ?? []).map((page) => page.url).sort();
@@ -67,18 +67,18 @@ async function main() {
     generatedAt: new Date().toISOString(),
     sourceManifest: inputPath,
     fields: {
-      legacyUrl: '기존 URL',
+      legacyUrl: 'Legacy source URL',
       category: 'page_content|board_or_post|notice_popup|media_or_attachment|admin_or_auth',
-      recordKey: '고유 키',
-      targetSlug: '신규 사이트 slug',
+      recordKey: 'Unique migration key',
+      targetSlug: 'New site slug',
       contentType: 'page|notice|board|gallery|file',
-      title: '제목',
-      bodyHtml: '정리된 HTML',
+      title: 'Title',
+      bodyHtml: 'Sanitized HTML body',
       publishedAt: 'YYYY-MM-DDTHH:mm:ssZ',
-      author: '작성자',
-      tags: '태그 배열',
-      attachments: '첨부 링크 배열',
-      notes: '추가 메모',
+      author: 'Author',
+      tags: 'Array of tags',
+      attachments: 'Array of attachment URLs',
+      notes: 'Additional migration notes',
     },
     records: initializeMapping(pageUrls),
   };

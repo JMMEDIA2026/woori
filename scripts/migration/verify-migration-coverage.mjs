@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
@@ -23,8 +23,8 @@ function normalizeUrl(url) {
 }
 
 async function main() {
-  const inputPath = getArg('input', '/home/runner/work/woori/woori/migration-work/verify-seed.json');
-  const outDir = getArg('out', '/home/runner/work/woori/woori/migration-work');
+  const inputPath = getArg('input', resolve(process.cwd(), 'migration-work/verify-seed.json'));
+  const outDir = getArg('out', resolve(process.cwd(), 'migration-work'));
 
   const data = JSON.parse(await readFile(inputPath, 'utf8'));
   const legacySet = new Set((data.legacyUrls ?? []).map(normalizeUrl));
