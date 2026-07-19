@@ -33,12 +33,13 @@ app.get("/api/branding", async (_req, res) => {
         logoUrl: "input_file_0.png",
       });
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
     res.json({
       orgName: "비영리민간단체 우리원",
       slogan: "N·S WOORI_ONE UNION",
       logoUrl: "input_file_0.png",
-      error: err.message,
+      error: message,
     });
   }
 });
@@ -85,10 +86,11 @@ app.get("/api/db-status", async (_req, res) => {
       lastSynced: new Date(),
       supabaseEnabled: true,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Database connection failed";
     res.status(500).json({
       status: "error",
-      error: err.message || "Database connection failed",
+      error: message,
       lastSynced: new Date(),
       supabaseEnabled: false,
     });

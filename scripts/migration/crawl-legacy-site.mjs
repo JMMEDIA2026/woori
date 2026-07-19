@@ -31,11 +31,23 @@ function parseNumberArg(name, fallback) {
 
 function toAbsoluteUrl(base, value) {
   if (!value) return null;
-  if (value.startsWith('mailto:') || value.startsWith('tel:') || value.startsWith('javascript:') || value.startsWith('#')) {
+  const lower = value.toLowerCase();
+  if (
+    lower.startsWith('mailto:') ||
+    lower.startsWith('tel:') ||
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('vbscript:') ||
+    value.startsWith('#')
+  ) {
     return null;
   }
   try {
-    return new URL(value, base).toString();
+    const resolved = new URL(value, base);
+    if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+      return null;
+    }
+    return resolved.toString();
   } catch {
     return null;
   }
