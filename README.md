@@ -18,3 +18,17 @@ View your app in AI Studio: https://ai.studio/apps/ebdefa02-d506-4480-9e95-45e46
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Legacy site migration workflow
+
+1. Crawl and snapshot the legacy site (HTML + assets):
+   `npm run migration:crawl -- --base https://usao.co.kr`
+2. Build migration work files (inventory/mapping/redirect template):
+   `npm run migration:prepare`
+3. Fill `migration-work/verify-seed.json` with migrated URLs, then run coverage check:
+   `npm run migration:verify`
+
+Optional flags:
+- `migration:crawl`: `--out /absolute/path --max-pages 3000 --concurrency 4`
+- `migration:prepare`: `--input /absolute/path/to/manifest.json --out /absolute/path`
+- `migration:verify`: `--input /absolute/path/to/verify-seed.json --out /absolute/path`
