@@ -12,6 +12,7 @@ const CATEGORY_RULES = [
   },
   { category: 'admin_or_auth', pattern: /(admin|manager|login)/ },
 ];
+const RECORD_KEY_PADDING_LENGTH = 5;
 
 function getArg(name, fallback) {
   const index = process.argv.indexOf(`--${name}`);
@@ -31,7 +32,7 @@ function initializeMapping(urls) {
   return urls.map((url, index) => ({
     legacyUrl: url,
     category: categoryForUrl(url),
-    recordKey: `LEGACY_${String(index + 1).padStart(5, '0')}`,
+    recordKey: `LEGACY_${String(index + 1).padStart(RECORD_KEY_PADDING_LENGTH, '0')}`,
     targetSlug: '',
     contentType: '',
     title: '',

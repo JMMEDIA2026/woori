@@ -88,7 +88,7 @@ function shouldIncludeHost(candidateHost, baseHost, includeSubdomains) {
 }
 
 async function delay(ms) {
-  await new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
+  await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function fetchWithRetry(url, options, retries) {
