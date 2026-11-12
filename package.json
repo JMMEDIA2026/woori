@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "AI 에이전트용 전화번호 서비스 홈페이지 (Cloudflare Workers + 정적 자산)",
+  "description": "나만의 인터넷 전화와 문자 (Cloudflare Worker + D1 + Twilio)",
   "scripts": {
-    "start": "node server.js",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },
-  "devDependencies": { "wrangler": "^4" },
-  "engines": { "node": ">=18" }
+  "devDependencies": {
+    "@twilio/voice-sdk": "^2.18.5",
+    "wrangler": "^4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
